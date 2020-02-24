@@ -18,7 +18,7 @@ soup = BeautifulSoup(string_arquivo, 'html.parser') #faz o parsing do arquivo pa
 
 table = soup.find(name='table') #transforma a table em uma estrutura python
 
-dt_full = pd.read_html(str(table))[0].head(10) #lê o html e transforma novamente em string
+dt_full = pd.read_html(str(table))[0] #lê o html e transforma novamente em string
                                       #use .head(NUMERO_QUALQUER) para buscar somente os primeiros NUMERO_QUALQUER resultados
 
 print(dt_full)
@@ -33,7 +33,6 @@ fp.close
 
 os.remove('d_mega.htm')
 os.remove('D_megase.zip')
-
 
 
 
