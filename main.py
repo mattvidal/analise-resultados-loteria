@@ -11,6 +11,7 @@ mega_file.close()
 ref_arquivo = open("d_mega.htm","r") #lê esse html
 
 string_arquivo = ref_arquivo.read() #insere o html numa variável
+print('teste')
 
 ref_arquivo.close()
 
