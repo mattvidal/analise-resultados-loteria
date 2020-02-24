@@ -12,17 +12,27 @@ ref_arquivo = open("d_mega.htm","r") #lê esse html
 
 string_arquivo = ref_arquivo.read() #insere o html numa variável
 
+ref_arquivo.close()
+
 soup = BeautifulSoup(string_arquivo, 'html.parser') #faz o parsing do arquivo para html
 
 table = soup.find(name='table') #transforma a table em uma estrutura python
 
-dt_full = pd.read_html(str(table))[0] #lê o html e transforma novamente em string
+dt_full = pd.read_html(str(table))[0].head(10) #lê o html e transforma novamente em string
+                                      #use .head(NUMERO_QUALQUER) para buscar somente os primeiros NUMERO_QUALQUER resultados
 
+print(dt_full)
 dicionario = {}
 
 dicionario['jogos'] = dt_full.to_dict('records')
 
-print(dicionario['jogos'])
+json_file = json.dumps(dicionario)
+fp = open('mega_sena.json', 'w')
+fp.write(json_file)
+fp.close
+
+os.remove('d_mega.htm')
+os.remove('D_megase.zip')
 
 
 
