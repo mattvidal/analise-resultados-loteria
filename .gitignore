@@ -1,9 +1,5 @@
 __pycache__/
 
-env/
+venv/
 
 .vscode/
-
-d_mega.htm
-
-D_megase.zip

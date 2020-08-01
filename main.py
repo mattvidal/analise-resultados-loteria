@@ -1,27 +1,18 @@
-from webscraping import *
+from Scraping import *
 
-url_zip = "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip"
-nome_zip = 'D_megase.zip'
-nome_html = 'd_mega.htm'
+lista_produtos = []
 
-web = Scraping(url_zip)
+lista_produtos.append(Produto("mega_sena", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip", "D_megase.zip", "d_mega.htm"))
+lista_produtos.append(Produto("lotofacil", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip", "D_lotfac.zip", "d_mega.htm"))
+lista_produtos.append(Produto("quina", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip", "D_megase.zip", "d_mega.htm"))
+lista_produtos.append(Produto("lotomania", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip", "D_megase.zip", "d_mega.htm"))
+lista_produtos.append(Produto("timemania", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip", "D_megase.zip", "d_mega.htm"))
+lista_produtos.append(Produto("dupla_sena", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip", "D_megase.zip", "d_mega.htm"))
+lista_produtos.append(Produto("dia_de_sorte", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip", "D_megase.zip", "d_mega.htm"))
 
-web.extrairZip(nome_zip, nome_html)
-
-string = web.inserirHtmlVar(nome_html)
-
-conteudo = web.tratarHTML(string) 
-
-dicionario = {}
-
-dicionario['jogos'] = conteudo.to_dict('records')
-
-web.transformarDictToJSON(dicionario, 'mega_sena.json')
-
-arquivos = [nome_html, nome_zip]
-
-web.removerArquivos([nome_html, nome_zip])
+# BaixaArquivos()
 
 
 
-
+for produto in lista_produtos:
+    print(produto.produto)
