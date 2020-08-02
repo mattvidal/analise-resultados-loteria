@@ -21,14 +21,14 @@ class Scraping():
         output_dir.mkdir(parents=True, exist_ok=True)
 
         if endereco is None:
-            endereco = os.path.basename(item.url_zip.split("?")[0])
+            endereco = os.path.basename(self.item.url_zip.split("?")[0])
 
         #Download do arquivo, o escrevendo em disco e substituindo caso exista.
-        resposta = requests.get(item.url_zip)
+        resposta = requests.get(self.item.url_zip)
         if resposta.status_code == requests.codes.OK:
             with open(endereco, 'wb') as novo_arquivo:
                     novo_arquivo.write(resposta.content)
-            print("Download de " + item.produto + " realizado com sucesso!")
+            print("Download de " + self.item.produto + " realizado com sucesso!")
         else:
             print("Erro no download")
             resposta.raise_for_status()
