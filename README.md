@@ -1,1 +1,1 @@
-# MegaSena_WebScraping
+# analise-resultados-loteria
