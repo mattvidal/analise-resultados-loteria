@@ -10,8 +10,10 @@ from Produto import *
 
 class Scraping():
 
-    def __init__(self, url, endereco=None):
+    def __init__(self, item, endereco=None):
         super().__init__()
+
+        self.item = item
 
         #Verifica se a pasta existe. Senão existir, ele cria sozinho.
         output_dir = Path('Dados')
@@ -19,19 +21,27 @@ class Scraping():
         output_dir.mkdir(parents=True, exist_ok=True)
 
         if endereco is None:
-            endereco = os.path.basename(url.split("?")[0])
+            endereco = os.path.basename(item.url_zip.split("?")[0])
 
         #Download do arquivo, o escrevendo em disco e substituindo caso exista.
-        resposta = requests.get(url)
+        resposta = requests.get(item.url_zip)
         if resposta.status_code == requests.codes.OK:
             with open(endereco, 'wb') as novo_arquivo:
                     novo_arquivo.write(resposta.content)
-            print("Download finalizado!")
+            print("Download de " + item.produto + " realizado com sucesso!")
         else:
             print("Erro no download")
             resposta.raise_for_status()
 
-    def extrairZip(self, nome_zip, nome_html):
+    def iniciar(self):
+        
+        self.__extrairZip(self.item.nome_zip, self.item.nome_html)
+        string = self.__inserirHtmlVar(self.item.nome_html)
+        df = self.__tratarHTML(string)
+        self.__salvarCSV(df, self.item.produto)
+
+        
+    def __extrairZip(self, nome_zip, nome_html):
 
         # Busca o arquivo zip, extrai o HTML necessário e fecha o arquivo.
         arquivo = zipfile.ZipFile(nome_zip)
@@ -39,9 +49,9 @@ class Scraping():
         arquivo.close()
 
         #remove o zip
-        self.removerArquivos([nome_zip])
+        self.__removerArquivos([nome_zip])
 
-    def inserirHtmlVar(self, nome_html):
+    def __inserirHtmlVar(self, nome_html):
         
         #Lê o HTML, insere em uma variável e a retorna
         ref_arquivo = open(nome_html,"r")
@@ -49,11 +59,11 @@ class Scraping():
         ref_arquivo.close()
 
         #remove o htm
-        self.removerArquivos([nome_html])
+        self.__removerArquivos([nome_html])
 
         return string_arquivo
 
-    def tratarHTML(self, string):
+    def __tratarHTML(self, string):
         
         #Faz o parsing do arquivo para HTML e o transforma em uma estrutura python e a retorna.
         soup = BeautifulSoup(string, 'html.parser')
@@ -64,10 +74,14 @@ class Scraping():
         #pd.read_html(str(tabela))[0].head(10)
         return pd.read_html(str(tabela))[0]
 
-    def removerArquivos(self, arquivos):
+    def __removerArquivos(self, arquivos):
 
         for arquivo in arquivos:
             os.remove(arquivo)
+
+    def __salvarCSV(self, df, nome):
+
+        df.to_csv('Dados/' + nome + '.csv', sep=';', encoding='utf-8', index=False)
 
 def BaixaArquivos():
 
@@ -80,16 +94,10 @@ def BaixaArquivos():
     lista_produtos.append(Produto("timemania", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_timema.zip", "D_timema.zip", "d_timema.htm"))
     lista_produtos.append(Produto("dupla_sena", "http://www1.caixa.gov.br/loterias/_arquivos/loterias/d_dplsen.zip", "d_dplsen.zip", "d_dplsen.htm"))
 
-    for lista in lista_produtos:
+    for item in lista_produtos:
 
-        web = Scraping(lista.url_zip)
+        scrap = Scraping(item)
 
-        web.extrairZip(lista.nome_zip, lista.nome_html)
-
-        string = web.inserirHtmlVar(lista.nome_html)
-
-        conteudo = web.tratarHTML(string) 
-
-        conteudo.to_csv('Dados/' + lista.produto + '.csv', sep=';', encoding='utf-8', index=False)
-    
+        scrap.iniciar()
+        
 BaixaArquivos()
